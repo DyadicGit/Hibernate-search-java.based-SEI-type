@@ -12,6 +12,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.beans.PropertyVetoException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 @Configuration
@@ -45,7 +46,7 @@ public class HibernateConfiguration {
         properties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
         properties.put("hibernate.cache.provider_class", "org.hibernate.cache.NoCacheProvider");
         properties.put("hibernate.search.default.directory_provider", "org.hibernate.search.store.impl.FSDirectoryProvider");
-        properties.put("hibernate.search.default.indexBase", "/home/adomas/db/indeces");
+        properties.put("hibernate.search.default.indexBase", Paths.get(System.getProperty("user.home"), "db", "indeces").toAbsolutePath().toString());
         return properties;
     }
 
