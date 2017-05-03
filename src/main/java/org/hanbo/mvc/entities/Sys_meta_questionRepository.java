@@ -13,13 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@SuppressWarnings("unchecked")
-public class Sys_meta_questionRepository
+public class Sys_meta_questionRepository implements Sys_meta_questionRepoInterface
 {
-   @Autowired
    private SessionFactory sessionFactory;
 
-   @Transactional
+   @Override
    public void indexSys_meta_question() throws Exception
    {
       try
@@ -34,9 +32,8 @@ public class Sys_meta_questionRepository
          throw e;
       }
    }
-   
 
-   @Transactional
+   @Override
    public List<Sys_meta_question> searchForBook(String searchText) throws Exception
    {
       try
@@ -70,7 +67,7 @@ public class Sys_meta_questionRepository
          */
 
 
-         org.hibernate.Query hibQuery =
+         org.hibernate.query.Query hibQuery =
             fullTextSession.createFullTextQuery(query, Sys_meta_question.class);
 
          List<Sys_meta_question> results = hibQuery.list();
@@ -80,5 +77,10 @@ public class Sys_meta_questionRepository
       {
          throw e;
       }
+   }
+
+ @Autowired
+   public void setSessionFactory(SessionFactory sessionFactory) {
+      this.sessionFactory = sessionFactory;
    }
 }

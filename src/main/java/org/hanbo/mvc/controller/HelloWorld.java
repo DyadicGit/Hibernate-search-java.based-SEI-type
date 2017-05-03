@@ -1,15 +1,16 @@
 package org.hanbo.mvc.controller;
 
 import org.hanbo.mvc.entities.Sys_meta_question;
-import org.hanbo.mvc.entities.Sys_meta_questionRepository;
+import org.hanbo.mvc.entities.Sys_meta_questionRepoInterface;
+import org.hanbo.mvc.entities.Sys_meta_questionService;
 import org.hanbo.mvc.helpers.Pasirinkimai;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,41 +19,36 @@ import java.util.List;
 @Controller
 public class HelloWorld {
     @Autowired
-    private Sys_meta_questionRepository _repo;
+    private Sys_meta_questionService _repo;
 
     //used for running the indexing process
     @RequestMapping(value = "/")
-    public ModelAndView welcome() throws Exception {
+    public String welcome(Model mav) throws Exception {
         _repo.indexSys_meta_question();
-
-        ModelAndView mav = new ModelAndView("hello");
-        mav.addObject("message", "Hello World!");
-        return mav;
+        mav.addAttribute("message", "Hello World!");
+        return "hello";
     }
 
     // creates a new empty view
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public ModelAndView searchPage() {
-        ModelAndView model = new ModelAndView("search");
-        model.addObject("pasirinkimai", new Pasirinkimai());
-        return model;
+    public String searchPage(Model model) {
+        model.addAttribute("pasirinkimai", new Pasirinkimai());
+        return "search";
     }
 
     //gets the typed search_word and retrieves found items
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ModelAndView search(
+    public String search(Model model,
             @RequestParam("searchText")
                     String searchText, @ModelAttribute("pasirinkimai")Pasirinkimai pasirinkimai
     ) throws Exception {
         List<Sys_meta_question> allFound = _repo.searchForBook(searchText);
-        ModelAndView mav = new ModelAndView("search");
         if (searchText.length() != 0) {
-            mav.addObject("allFound", allFound);
-            return mav;
+            model.addAttribute("allFound", allFound);
         } else {
-            mav.addObject("arIvede", "ne");
-            return mav;
+            model.addAttribute("arIvede", "ne");
         }
+        return "search";
     }
 
     @ModelAttribute("webParamList")
@@ -76,7 +72,6 @@ public class HelloWorld {
         question_textList.add("Coherence and comparability");
         question_textList.add("Comparability - geographical");
         question_textList.add("Asymmetry for mirror flows statistics - coefficient");
-
 
         return question_textList;
     }
